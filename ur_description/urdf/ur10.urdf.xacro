@@ -88,7 +88,14 @@ center_of_mass = [ [0.00008, -0.037, 0.00244], [0.38757, 0.00001, 0.15061], [0.1
   <property name="joint_limit_velocity" value="${pi}" />
 
 
-  <xacro:macro name="ur10_robot" params="prefix">
+  <xacro:macro name="ur10_robot" params="prefix parent x y z roll pitch yaw">
+
+  <!-- Added connector joint for connecting it with a robot -->
+  <joint name="${prefix}ur10_connector" type="fixed">
+    <parent link="${parent}" />
+    <child link = "${prefix}base_link" />
+    <origin xyz="${x} ${y} ${z}" rpy="${roll} ${pitch} ${yaw}" />
+  </joint>
 
   <link name="${prefix}base_link" >
     <visual>
@@ -106,7 +113,7 @@ center_of_mass = [ [0.00008, -0.037, 0.00244], [0.38757, 0.00001, 0.15061], [0.1
     </collision>
     
     <inertial>
-      <mass value="${base_mass}" />
+      <mass value="${base_mass}"/>
       <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0"/>
     </inertial>
   </link>
@@ -349,11 +356,40 @@ center_of_mass = [ [0.00008, -0.037, 0.00244], [0.38757, 0.00001, 0.15061], [0.1
     </inertial>
   </link>
   
-  <joint name="${prefix}ee_fixed_joint" type="fixed">
+  <joint name="${prefix}hook_fixed_joint" type="fixed">
     <parent link="${prefix}wrist_3_link" />
-    <child link = "${prefix}ee_link" />
+    <child link = "${prefix}hook_link" />
     <origin xyz="0.0 ${wrist_3_length} 0.0" rpy="0.0 0.0 ${pi/2.0}" />    
   </joint>
+
+  <link name="${prefix}hook_link">
+    <visual>
+      <geometry>
+        <mesh filename="package://seneka_ugv_description/meshes/gripper.dae" scale="0.001 0.001 0.001"/>
+      </geometry>
+      <origin xyz="0.0 0.0 0.0" rpy="0.0 -1.57 0.0" />  
+    </visual>
+
+    <collision>
+      <geometry>
+          <mesh filename="package://seneka_ugv_description/meshes/gripper.dae" scale="0.001 0.001 0.001"/>
+      </geometry>
+      <origin xyz="0.0 0.0 0.0" rpy="0.0 -1.57 0.0" /> 
+    </collision>
+
+    <inertial>
+      <mass value="1" />
+      <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0" />  
+      <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0"/>
+    </inertial>
+  </link>
+
+  <joint name="${prefix}ee_fixed_joint" type="fixed">
+    <parent link="${prefix}hook_link" />
+    <child link = "${prefix}ee_link" />
+    <origin xyz="0.0 -0.25 0.0" rpy="0.0 0.0 0.0" />    
+  </joint>
+
   <link name="${prefix}ee_link" />
 
   <xacro:ur10_arm_transmission prefix="${prefix}" />
