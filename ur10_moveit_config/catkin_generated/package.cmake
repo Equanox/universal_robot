@@ -1,7 +1,0 @@
-set(_CATKIN_CURRENT_PACKAGE "ur10_moveit_config")
-set(ur10_moveit_config_MAINTAINER "MoveIt Setup Assistant <assistant@moveit.ros.org>")
-set(ur10_moveit_config_DEPRECATED "")
-set(ur10_moveit_config_VERSION "0.2.0")
-set(ur10_moveit_config_BUILD_DEPENDS "ur_description")
-set(ur10_moveit_config_RUN_DEPENDS "moveit_ros_move_group" "xacro" "ur_description")
-set(ur10_moveit_config_BUILDTOOL_DEPENDS "catkin")

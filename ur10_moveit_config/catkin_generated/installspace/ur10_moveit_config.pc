@@ -1,8 +1,0 @@
-prefix=/home/matthias/groovy_workspace/catkin_ws/install
-
-Name: ur10_moveit_config
-Description: Description of ur10_moveit_config
-Version: 0.2.0
-Cflags: 
-Libs: -L/home/matthias/groovy_workspace/catkin_ws/install/lib 
-Requires: 
