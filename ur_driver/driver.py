@@ -531,7 +531,7 @@ class UR5TrajectoryFollower(object):
             point0 = sample_traj(self.traj, now)
             point0.time_from_start = rospy.Duration(0.0)
             goal_handle.get_goal().trajectory.points.insert(0, point0)
-            self.traj_t0 = now
+            self.traj_t0 = now#is this the time when traj exec starts?
 
             # Replaces the goal
             self.goal_handle = goal_handle
