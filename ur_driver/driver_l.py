@@ -41,8 +41,8 @@ MULT_jointstate = 10000.0
 MULT_time = 1000000.0
 MULT_blend = 1000.0
 
-JOINT_NAMES = ['right_arm_shoulder_pan_joint', 'right_arm_shoulder_lift_joint', 'right_arm_elbow_joint',
-               'right_arm_wrist_1_joint', 'right_arm_wrist_2_joint', 'right_arm_wrist_3_joint']
+JOINT_NAMES = ['left_arm_shoulder_pan_joint', 'left_arm_shoulder_lift_joint', 'left_arm_elbow_joint',
+               'left_arm_wrist_1_joint', 'left_arm_wrist_2_joint', 'left_arm_wrist_3_joint']
 
 Q1 = [2.2,0,-1.57,0,0,0]
 Q2 = [1.5,0,-1.57,0,0,0]
@@ -531,7 +531,7 @@ class UR5TrajectoryFollower(object):
             point0 = sample_traj(self.traj, now)
             point0.time_from_start = rospy.Duration(0.0)
             goal_handle.get_goal().trajectory.points.insert(0, point0)
-            self.traj_t0 = now#is this the time when traj exec starts?
+            self.traj_t0 = now
 
             # Replaces the goal
             self.goal_handle = goal_handle
@@ -639,12 +639,12 @@ def main():
     max_velocity = rospy.get_param("~max_velocity", 0.5)
 
     # Sets up the server for the robot to connect to
-    server = TCPServer(("", 50001), CommanderTCPHandler)
+    server = TCPServer(("", 50002), CommanderTCPHandler)
     thread_commander = threading.Thread(name="CommanderHandler", target=server.serve_forever)
     thread_commander.daemon = True
     thread_commander.start()
 
-    with open(roslib.packages.get_pkg_dir('ur_driver') + '/prog') as fin:
+    with open(roslib.packages.get_pkg_dir('ur_driver') + '/prog_l') as fin:
         program = fin.read() % {"driver_hostname": get_my_ip(robot_hostname, PORT)}
     connection = UR5Connection(robot_hostname, PORT, program)
     connection.connect()
