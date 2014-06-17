@@ -41,8 +41,8 @@ MULT_jointstate = 10000.0
 MULT_time = 1000000.0
 MULT_blend = 1000.0
 
-JOINT_NAMES = ['right_arm_shoulder_pan_joint', 'right_arm_shoulder_lift_joint', 'right_arm_elbow_joint',
-               'right_arm_wrist_1_joint', 'right_arm_wrist_2_joint', 'right_arm_wrist_3_joint']
+JOINT_NAMES = ['shoulder_pan_joint', 'shoulder_lift_joint', 'elbow_joint',
+               'wrist_1_joint', 'wrist_2_joint', 'wrist_3_joint']
 
 Q1 = [2.2,0,-1.57,0,0,0]
 Q2 = [1.5,0,-1.57,0,0,0]
@@ -560,7 +560,7 @@ class UR5TrajectoryFollower(object):
                 self.goal_handle = None
         else:
             goal_handle.set_canceled()
-
+	
     last_now = time.time()
     def _update(self, event):
         if self.robot and self.traj:
