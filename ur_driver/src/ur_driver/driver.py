@@ -349,12 +349,12 @@ class CommanderTCPHandler(SocketServer.BaseRequestHandler):
         with self.socket_lock:
             self.request.send(buf)
         
-#HERE2    
+    #HERE2
     def send_payload(self,payload):
         buf = struct.pack('!ii', MSG_SET_PAYLOAD, payload * MULT_PAYLOAD)
         with self.socket_lock:
             self.request.send(buf)
-
+        
     def send_stopj(self):
         with self.socket_lock:
             self.request.send(struct.pack("!i", MSG_STOPJ))
