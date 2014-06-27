@@ -54,7 +54,7 @@ connected_robot = None
 connected_robot_lock = threading.Lock()
 connected_robot_cond = threading.Condition(connected_robot_lock)
 pub_joint_states = rospy.Publisher('/joint_states', JointState)
-pub_wrench = rospy.Publisher('wrench', Wrench)
+pub_wrench = rospy.Publisher('ur_driver/wrench', Wrench)
 #dump_state = open('dump_state', 'wb')
 
 class EOF(Exception): pass
