@@ -17,6 +17,7 @@ from control_msgs.msg import FollowJointTrajectoryAction
 from trajectory_msgs.msg import JointTrajectory, JointTrajectoryPoint
 from geometry_msgs.msg import Wrench
 
+from ur_driver.srv import *
 from ur_driver.deserialize import RobotState, RobotMode
 
 prevent_programming = False
@@ -38,6 +39,8 @@ MSG_MOVEJ = 4
 MSG_WAYPOINT_FINISHED = 5
 MSG_STOPJ = 6
 MSG_SERVOJ = 7
+MSG_SET_PAYLOAD = 8
+MULT_PAYLOAD = 1000.0
 MULT_jointstate = 10000.0
 MULT_time = 1000000.0
 MULT_blend = 1000.0
@@ -238,7 +241,7 @@ def getConnectedRobot(wait=False, timeout=-1):
                 connected_robot_cond.wait(0.2)
         return connected_robot
 
-# Receives messages from the robot over the socket
+# Receives and sends messages from and to the robot over the socket
 class CommanderTCPHandler(SocketServer.BaseRequestHandler):
 
     def recv_more(self):
@@ -346,6 +349,11 @@ class CommanderTCPHandler(SocketServer.BaseRequestHandler):
         with self.socket_lock:
             self.request.send(buf)
         
+#HERE2    
+    def send_payload(self,payload):
+        buf = struct.pack('!ii', MSG_SET_PAYLOAD, payload * MULT_PAYLOAD)
+        with self.socket_lock:
+            self.request.send(buf)
 
     def send_stopj(self):
         with self.socket_lock:
@@ -453,6 +461,26 @@ def within_tolerance(a_vec, b_vec, tol_vec):
         if abs(a - b) > tol:
             return False
     return True
+
+#HERE
+class URServiceProvider(object):
+    def __init__(self, robot):
+        self.robot = robot
+        rospy.Service('ur_driver/setPayload', URSetPayload, self.setPayload)
+
+    def set_robot(self, robot):
+        self.robot = robot
+
+    def setPayload(self, req):
+        if req.payload < 0 or req.payload > 20.00:
+            print 'ERROR: Payload out of bounce'
+            return False
+        
+        if self.robot:
+            self.robot.send_payload(req.payload)
+        else:
+            return False
+        return True
 
 class URTrajectoryFollower(object):
     RATE = 0.02
@@ -712,6 +740,7 @@ def main():
     connection.connect()
     connection.send_reset_program()
     
+    provider = None
     action_server = None
     try:
         while not rospy.is_shutdown():
@@ -741,6 +770,12 @@ def main():
                         break
                 rospy.loginfo("Robot connected")
 
+                #provider for service calls
+                if provider:
+                    provider.set_robot(r)
+                else:
+                    provider = URServiceProvider(r)
+                
                 if action_server:
                     action_server.set_robot(r)
                 else:
