@@ -44,7 +44,7 @@
 #define SIGN(x) ( ( (x) > 0 ) - ( (x) < 0 ) )
 #define PI M_PI
 
-//#define UR10_PARAMS
+#define UR10_PARAMS
 #ifdef UR10_PARAMS
 #define d1  0.1273
 #define a2 -0.612
